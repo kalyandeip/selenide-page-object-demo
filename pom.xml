@@ -47,7 +47,7 @@
 
     <build>
         <plugins>
-            <!-- Maven Compiler Plugin with --add-exports for JDK 17+ -->
+            <! Maven Compiler Plugin with --add-exports for JDK 17+ >
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
