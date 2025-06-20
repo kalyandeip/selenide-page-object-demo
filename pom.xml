@@ -3,25 +3,22 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
-
-    <groupId>com.example</groupId>
+    <groupId>org.selenide.examples</groupId>
     <artifactId>selenide-page-object-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
-    <name>Selenide Page Object Demo</name>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <dependencies>
-        <!-- Lombok -->
+        <!-- Remove duplicate safari-driver if present -->
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.18.30</version>
-            <scope>provided</scope>
+            <groupId>org.seleniumhq.selenium</groupId>
+            <artifactId>selenium-safari-driver</artifactId>
+            <version>3.141.59</version>
         </dependency>
 
         <!-- Selenide -->
@@ -31,7 +28,15 @@
             <version>7.2.2</version>
         </dependency>
 
-        <!-- JUnit Jupiter (JUnit 5) -->
+        <!-- Lombok -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.30</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- JUnit 5 -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -42,8 +47,7 @@
 
     <build>
         <plugins>
-
-            <!-- Compiler plugin with export flags for JDK 17+ -->
+            <!-- Maven Compiler Plugin with --add-exports for JDK 17+ -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -59,7 +63,7 @@
                 </configuration>
             </plugin>
 
-            <!-- Surefire plugin for JUnit 5 -->
+            <!-- Surefire Plugin for JUnit 5 -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
@@ -68,7 +72,6 @@
                     <useModulePath>false</useModulePath>
                 </configuration>
             </plugin>
-
         </plugins>
     </build>
 
