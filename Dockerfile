@@ -1,57 +1,29 @@
-# Base image with Java 17
-FROM eclipse-temurin:17-jdk AS base
-
-# Set environment variables
-ENV LANG=C.UTF-8
-ENV DEBIAN_FRONTEND=noninteractive
-
-# Install required packages and Chrome
-RUN apt-get update && apt-get install -y \
-    wget \
-    unzip \
-    curl \
-    gnupg \
-    ca-certificates \
-    fonts-liberation \
-    libatk-bridge2.0-0 \
-    libatk1.0-0 \
-    libcups2 \
-    libdbus-1-3 \
-    libgdk-pixbuf2.0-0 \
-    libnspr4 \
-    libnss3 \
-    libx11-xcb1 \
-    libxcomposite1 \
-    libxdamage1 \
-    libxrandr2 \
-    libxss1 \
-    libxtst6 \
-    xdg-utils \
-    --no-install-recommends && \
-    rm -rf /var/lib/apt/lists/*
+FROM maven:3.9.6-eclipse-temurin-17 AS build
 
 # Install Chrome
-RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt-get update && \
-    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
-    rm google-chrome-stable_current_amd64.deb
+RUN apt-get update && apt-get install -y \
+    wget gnupg unzip curl \
+    fonts-liberation libappindicator3-1 libasound2 libatk-bridge2.0-0 \
+    libnspr4 libnss3 libxss1 xdg-utils libgbm1 libgtk-3-0
 
-# Optional: Run Chrome in headless mode via Selenide
-ENV SELENIDE_BROWSER=chrome
-ENV SELENIDE_HEADLESS=true
+RUN wget -q -O - https://dl.google.com/linux/linux_signing_key.pub | gpg --dearmor > /etc/apt/trusted.gpg.d/google.gpg
+RUN echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list
+RUN apt-get update && apt-get install -y google-chrome-stable
 
-# Install Maven
-RUN wget -q https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip && \
-    unzip apache-maven-3.9.6-bin.zip && \
-    mv apache-maven-3.9.6 /opt/maven && \
-    ln -s /opt/maven/bin/mvn /usr/bin/mvn && \
-    rm apache-maven-3.9.6-bin.zip
+# Optional: Install Xvfb if using with non-headless Chrome
+# RUN apt-get install -y xvfb
 
-# Add project files
-WORKDIR /project
+# Set display env if needed
+ENV DISPLAY=:99
+
+# Setup workdir
+WORKDIR /usr/src/app
+
+# Copy source
 COPY . .
 
-# Build and run tests
-RUN mvn clean verify
+# Build
+RUN mvn clean test
 
-CMD ["tail", "-f", "/dev/null"]
+# Default CMD
+CMD ["mvn", "test"]
