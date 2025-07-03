@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
     <modelVersion>4.0.0</modelVersion>
@@ -10,7 +11,7 @@
     <properties>
         <maven.compiler.source>17</maven.compiler.source>
         <maven.compiler.target>17</maven.compiler.target>
-        <browser>chrome</browser>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
 
     <repositories>
@@ -21,23 +22,12 @@
     </repositories>
 
     <build>
-        <defaultGoal>clean dependency:copy-dependencies test</defaultGoal>
+        <defaultGoal>clean verify</defaultGoal>
         <sourceDirectory>src/main</sourceDirectory>
         <testSourceDirectory>src/test</testSourceDirectory>
+
         <plugins>
-            <!-- SUREFIRE TEST RUNNER -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <!-- SUREFIRE REPORT PLUGIN -->
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-surefire-report-plugin</artifactId>
-                <version>2.22.2</version>
-            </plugin>
-            <!-- COMPILER PLUGIN FOR JAVA 17 AND LOMBOK -->
+            <!-- Compiler Plugin for Java 17 + Lombok -->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
@@ -59,11 +49,25 @@
                     </compilerArgs>
                 </configuration>
             </plugin>
+
+            <!-- Test Execution Plugin -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
+
+            <!-- Test Report Generator -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-report-plugin</artifactId>
+                <version>2.22.2</version>
+            </plugin>
         </plugins>
     </build>
 
     <dependencies>
-        <!-- TESTNG -->
+        <!-- TestNG -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
@@ -71,29 +75,28 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- SELENIDE -->
+        <!-- Selenide -->
         <dependency>
             <groupId>com.codeborne</groupId>
             <artifactId>selenide</artifactId>
             <version>5.24.2</version>
         </dependency>
 
-        <!-- SAFARI DRIVER -->
+        <!-- Safari Driver (no <scope> so it's included in compilation) -->
         <dependency>
             <groupId>org.seleniumhq.selenium</groupId>
             <artifactId>selenium-safari-driver</artifactId>
             <version>3.141.59</version>
-            <scope>test</scope>
         </dependency>
 
-        <!-- TEST RESULT ANALYZER -->
+        <!-- TestNG HTML Analyzer -->
         <dependency>
             <groupId>com.github.osandadeshan</groupId>
             <artifactId>maxsoft-testng-test-results-analyzer</artifactId>
             <version>1.1.2</version>
         </dependency>
 
-        <!-- LOGGING -->
+        <!-- SLF4J for logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
@@ -101,7 +104,7 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- LOMBOK -->
+        <!-- Lombok -->
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
