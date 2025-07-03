@@ -1,33 +1,35 @@
-# Stage 1: Build the project
+# Step 1: Build the application using Maven
 FROM maven:3.9.6-eclipse-temurin-17 AS build
 
+# Set working directory
 WORKDIR /app
 
-# Copy all files
+# Copy the entire project
 COPY . .
 
-# Build project and download dependencies (skip tests here, will run in next stage)
+# Build the project and skip tests
 RUN mvn clean package -DskipTests
 
-# Stage 2: Run tests in a headless Chrome environment
-FROM seleniarm/standalone-chromium:latest
+# Step 2: Create a minimal runtime image with Chrome and dependencies
+FROM eclipse-temurin:17-jdk
 
-USER root
-
-# Install Java 17 and Maven
-RUN apt-get update && \
-    apt-get install -y openjdk-17-jdk maven && \
-    apt-get clean
-
-ENV JAVA_HOME=/usr/lib/jvm/java-17-openjdk-amd64
-ENV PATH=$JAVA_HOME/bin:$PATH
-
-# Create work directory
-WORKDIR /app
-
-# Copy project from build stage
-COPY --from=build /app /app
-
-# Optional: Set headless Chrome via Selenide system properties
-ENV SELENIDE_BROWSER=chrome
-ENV SELENIDE_HEADLE_
+# Install dependencies and Chrome
+RUN apt-get update && apt-get install -y \
+    wget \
+    unzip \
+    curl \
+    gnupg \
+    ca-certificates \
+    fonts-liberation \
+    libasound2 \
+    libatk-bridge2.0-0 \
+    libatk1.0-0 \
+    libcups2 \
+    libdbus-1-3 \
+    libgdk-pixbuf2.0-0 \
+    libnspr4 \
+    libnss3 \
+    libx11-xcb1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxra
