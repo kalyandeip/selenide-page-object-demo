@@ -1,14 +1,11 @@
-# Step 1: Build the application using Maven
-FROM maven:3.9.6-eclipse-temurin-17 AS build
+# Base image with Java 17
+FROM eclipse-temurin:17-jdk AS base
 
-WORKDIR /app
-COPY . .
-RUN mvn clean package -DskipTests
+# Set environment variables
+ENV LANG=C.UTF-8
+ENV DEBIAN_FRONTEND=noninteractive
 
-# Step 2: Runtime image with Chrome
-FROM eclipse-temurin:17-jdk
-
-# Install dependencies and Chrome
+# Install required packages and Chrome
 RUN apt-get update && apt-get install -y \
     wget \
     unzip \
@@ -16,7 +13,6 @@ RUN apt-get update && apt-get install -y \
     gnupg \
     ca-certificates \
     fonts-liberation \
-    libasound2t64 \
     libatk-bridge2.0-0 \
     libatk1.0-0 \
     libcups2 \
@@ -28,23 +24,34 @@ RUN apt-get update && apt-get install -y \
     libxcomposite1 \
     libxdamage1 \
     libxrandr2 \
+    libxss1 \
+    libxtst6 \
     xdg-utils \
     --no-install-recommends && \
     rm -rf /var/lib/apt/lists/*
 
-# Install Google Chrome
-RUN wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
-    apt install -y ./google-chrome-stable_current_amd64.deb && \
+# Install Chrome
+RUN wget -q https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb && \
+    apt-get update && \
+    apt-get install -y ./google-chrome-stable_current_amd64.deb && \
     rm google-chrome-stable_current_amd64.deb
 
-# Copy the built project
-WORKDIR /app
-COPY --from=build /app .
-
-# Set Selenide environment variables
+# Optional: Run Chrome in headless mode via Selenide
 ENV SELENIDE_BROWSER=chrome
 ENV SELENIDE_HEADLESS=true
-ENV SELENIDE_BROWSER_SIZE=1920x1080
 
-# Run tests
-CMD ["mvn", "test"]
+# Install Maven
+RUN wget -q https://downloads.apache.org/maven/maven-3/3.9.6/binaries/apache-maven-3.9.6-bin.zip && \
+    unzip apache-maven-3.9.6-bin.zip && \
+    mv apache-maven-3.9.6 /opt/maven && \
+    ln -s /opt/maven/bin/mvn /usr/bin/mvn && \
+    rm apache-maven-3.9.6-bin.zip
+
+# Add project files
+WORKDIR /project
+COPY . .
+
+# Build and run tests
+RUN mvn clean verify
+
+CMD ["tail", "-f", "/dev/null"]
